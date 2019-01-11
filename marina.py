@@ -7,6 +7,7 @@
 #FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 #DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 #OR OTHER DEALINGS IN THE SOFTWARE.
+#MARINA BOT, A DISCORD BOT FOR BETTER SMH IN BLACK DESERT ONLINE
 
 import discord
 import os
@@ -28,8 +29,7 @@ client = Bot(command_prefix = BOT_PREFIX)
 db = "seahunt.csv"
 tiersbackup = "tier.csv"
 tierlist = [180, 270, 360, 450, 540, 630, 720, 810, 900]
-totalcontrol = 'Administrator'
-parcialcontrol = ''
+
 #Currently develpment:
 # DONE:
 # DB creation
@@ -41,26 +41,10 @@ parcialcontrol = ''
 # Active sailors
 # Current loot
 
-@client.command(name = 'roleTotal',
-                description = 'Set the role that have total control over me.',
-                pass_context = True)
-@has_permissions(administrator = True)
-async def smh_roletotal(context, role:str):
-    totalcontrol = role
-    await client.say("The new total control rol is '" + role +"'.")
-
-@client.command(name = 'roleParcial',
-                description = 'Set the role that have parcial control over me.',
-                pass_context = True)
-@has_permissions(administrator = True)
-async def smh_roletotal(context, role:str):
-    parcialcontrol = role
-    await client.say("The new total control rol is '" + role +"'.")
-
 
 @client.command(name= 'tierupdate',
                 description = 'Updates the SMH tiers, start with t2 up to t10, t1 is always 0')
-@commands.has_any_role(totalcontrol)
+@commands.has_any_role('Sea Director')
 async def tier_update(t2:int, t3:int, t4:int, t5:int, t6:int, t7:int, t8:int, t9:int, t10:int):
     await client.say("The former tiers were: \n" + "tier 1 = 0m\n")
     for tier in range(len(tierlist)):
@@ -90,7 +74,7 @@ async def tier_update_error(context, error):
 
 @client.command(name= 'createdb',
                 description = 'Creates the database for the guild.')
-@commands.has_any_role(totalcontrol)
+@commands.has_any_role('Sea Director')
 async def createdb_smh():
     if (os.path.isfile(CWD +"/" +db) == False):
         with open (db, 'w') as newFile:
@@ -115,7 +99,7 @@ async def createdb_smh():
 @client.command(name = 'clean',
                 description = 'Cleans the SMH data',
                 pass_context = True)
-@commands.has_any_role(totalcontrol)
+@commands.has_any_role('Sea Director')
 async def clean_smh(context):
     if (os.path.isfile(CWD +"/"+db) == False):
         await client.say("REEEE, the database is missing, contact an officer or if you're an officer run the .createdb command first.")
@@ -138,6 +122,7 @@ async def clean_smh(context):
                 brief = "Add Neidans, Pirate Coins and 100m drops to your loot",
                 description = "Usage: .add <neidan|pirate|100m> quantity \n example: .add neidan 550",
                 pass_context = True)
+@commands.has_any_role('Members')
 async def add_smh(context, loot_type: str, quantity: float, picture: str, comment = ""):
     if (os.path.isfile(CWD +"/"+db) == False):
         await client.say("REEEE, the database is missing, contact an officer or if you're an officer run the .createdb command first.")
@@ -184,7 +169,7 @@ async def add_smh_error(context, error):
                 brief = 'Edit members loot, officer only, usage: .edit  @member  loot_type the_amount_to_add_or_substract (+ or -)  comment',
                 description = 'Edit members loot, officer only, usage: .edit  @member  loot_type the_amount_to_add_or_substract (+ or -)  comment',
                 pass_context = True)
-@commands.has_any_role(totalcontrol, parcialcontrol)
+@commands.has_any_role('Officers')
 async def edit_smh(context, mention: str, loot_type: str, quantity: float, comment = ""):
     if (os.path.isfile(CWD +"/"+db) == False):
         await client.say("REEEE, the database is missing, contact an officer or if you're an officer run the .createdb command first.")
@@ -231,6 +216,7 @@ async def edit_smh_error(context, error):
 @client.command(name = 'show_tiers',
                 brief = 'Display the current tiers for smh.',
                 pass_context = True)
+@commands.has_any_role('Members')
 async def show_tiers_smh(context):
     tiernumbers = '1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n'
     tierprofit = '$0\n'
@@ -248,7 +234,7 @@ async def show_tiers_smh(context):
                 brief = "Send you a copy of the SMH datasheet",
                 description = "Send you a copy of the latest SMH datasheet",
                 pass_context = True)
-@commands.has_any_role(totalcontrol, parcialcontrol)
+@commands.has_any_role('Sea Director')
 async def smh_end(context):
     #commented method sends the csv to the specified server by get_server
     #await client.say(context.message.author.mention + ", here it is, Nii-chan")
@@ -265,6 +251,7 @@ async def smh_end(context):
                 brief = 'Shows the total guildies loot for this week',
                 description = 'This will show the current loot gathered by guildies including their participation percentage',
                 pass_context = True)
+@commands.has_any_role('Members')
 async def loot_smh(context):
     if (os.path.isfile(CWD +"/"+db) == False):
         await client.say("REEEE, the database is missing, contact an officer or if you're an officer run the .createdb command first.")
@@ -307,6 +294,7 @@ async def loot_smh(context):
                brief = "Enrols the user that runs this command",
                description = "usage: .enrol FamilyName, if the user already exist the bot will notify so, otherwise the user will be added to the database.",
                pass_context = True)
+@commands.has_any_role('Members')
 async def enrol_me(context, family:str):
 
     if (os.path.isfile(CWD +"/"+db) == False):
@@ -343,7 +331,7 @@ async def enrol_me_error(context, error):
                 brief = "Removes the user from the SMH list",
                 description = "usage: .disenrol @user",
                 pass_context = True)
-@commands.has_any_role(totalcontrol)
+@commands.has_any_role('Sea Director')
 async def disenrol_smh(context, mention:str):
     if (os.path.isfile(CWD +"/"+db) == False):
         await client.say("REEEE, the database is missing, contact an officer or if you're an officer run the .createdb command first.")
@@ -374,6 +362,8 @@ async def disenrol_smh_error(context, error):
 @client.command(name = 'sailors',
                 description = 'Shows the Family Name of the people that has contributed.',
                 context = False)
+@commands.has_any_role('Members')
+
 async def sailors():
     if (os.path.isfile(CWD +"/"+db) == False):
         await client.say("REEEE, the database is missing, contact an officer or if you're an officer run the .createdb command first.")
@@ -440,7 +430,7 @@ async def disenrol_smh_error(context, error):
                 brief = "Shows the tier distribution and the users in it.",
                 description = "usage: .tiers",
                 pass_context = True)
-#@commands.has_any_role(totalcontrol, parcialcontrol)
+@commands.has_any_role('Members')
 async def tiers_smh(context):
     
     if (os.path.isfile(CWD +"/"+db) == False):
