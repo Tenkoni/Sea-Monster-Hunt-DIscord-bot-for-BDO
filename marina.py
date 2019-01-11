@@ -36,11 +36,10 @@ tierlist = [180, 270, 360, 450, 540, 630, 720, 810, 900]
 # Clean DB
 # Add loot
 # Register sailors
-# Remove sailors
+# Remove sailorsç
 # Send data
 # Active sailors
 # Current loot
-
 
 @client.command(name= 'tierupdate',
                 description = 'Updates the SMH tiers, start with t2 up to t10, t1 is always 0')
@@ -169,7 +168,7 @@ async def add_smh_error(context, error):
                 brief = 'Edit members loot, officer only, usage: .edit  @member  loot_type the_amount_to_add_or_substract (+ or -)  comment',
                 description = 'Edit members loot, officer only, usage: .edit  @member  loot_type the_amount_to_add_or_substract (+ or -)  comment',
                 pass_context = True)
-@commands.has_any_role('Officers')
+@commands.has_any_role('Sea Director', 'Officers')
 async def edit_smh(context, mention: str, loot_type: str, quantity: float, comment = ""):
     if (os.path.isfile(CWD +"/"+db) == False):
         await client.say("REEEE, the database is missing, contact an officer or if you're an officer run the .createdb command first.")
@@ -217,6 +216,7 @@ async def edit_smh_error(context, error):
                 brief = 'Display the current tiers for smh.',
                 pass_context = True)
 @commands.has_any_role('Members')
+
 async def show_tiers_smh(context):
     tiernumbers = '1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n'
     tierprofit = '$0\n'
@@ -363,7 +363,6 @@ async def disenrol_smh_error(context, error):
                 description = 'Shows the Family Name of the people that has contributed.',
                 context = False)
 @commands.has_any_role('Members')
-
 async def sailors():
     if (os.path.isfile(CWD +"/"+db) == False):
         await client.say("REEEE, the database is missing, contact an officer or if you're an officer run the .createdb command first.")
